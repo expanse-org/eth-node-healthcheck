@@ -15,9 +15,11 @@ const onHealthcheckRequest = async (req, res) => {
 
   let localBlockNum;
   //let networkBlockNum;
+	console.log(`>> checking health of node`);
 
   try {
     localBlockNum = await localProvider.getBlockNumber();
+    //console.log(localBlockNum);
     //networkBlockNum = await provider.getBlockNumber();
   } catch (e) {
     console.error(e);
@@ -25,10 +27,14 @@ const onHealthcheckRequest = async (req, res) => {
     res.end(e);
   }
 
-  let responseStatus = localBlockNum > MIN_BLOCK ? 500 : 200;
+  let responseStatus = localBlockNum > MIN_BLOCK ? 200 : 500;
+  console.log(`>> node is on block : ${localBlockNum}`);
+  console.log(`>> response status : ${responseStatus}`);
 
   res.writeHead(responseStatus, { 'Content-Type': 'text/plain' });
-  res.end((localBlockNum - networkBlockNum).toString());
+  res.end((localBlockNum).toString());
 };
+
+console.log(`Server Running on Port:${process.env.PORT}`);
 
 http.createServer(onHealthcheckRequest).listen(process.env.PORT);
